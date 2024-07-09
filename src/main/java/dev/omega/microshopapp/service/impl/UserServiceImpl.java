@@ -1,5 +1,6 @@
 package dev.omega.microshopapp.service.impl;
 
+import dev.omega.microshopapp.configuration.JwtUtilities;
 import dev.omega.microshopapp.model.dto.UserDto;
 import dev.omega.microshopapp.model.entity.RoleEntity;
 import dev.omega.microshopapp.model.entity.User;
@@ -12,8 +13,15 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -23,14 +31,27 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder ;
+    private final JwtUtilities jwtUtilities ;
 
     @Override
     public ResponseEntity<String> login(UserDto.UserLoginDto userLoginDto) {
         log.info("In service, Login account with username: {}", userLoginDto.getUsername());
-        if (userRepository.findByUsername(userLoginDto.getUsername()).isEmpty()) {
+        Authentication authentication= authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        userLoginDto.getUsername(),
+                        userLoginDto.getPassword()
+                )
+        );
+        Optional<User> user = userRepository.findByUsername(userLoginDto.getUsername());
+        if (user.isEmpty()) {
             return ResponseEntity.badRequest().body("Username or password is incorrect");
         }
-        return ResponseEntity.ok("Login success");
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        List<String> roles = user.get().getRoles().stream().map(role -> role.getRole().name()).toList();
+        String token = jwtUtilities.generateToken(user.get().getUsername(),roles);
+        return ResponseEntity.ok("Login success token: " + token);
     }
 
     @Override

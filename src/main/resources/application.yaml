@@ -54,3 +54,6 @@ server:
     application-display-name: MicroShopApp
     encoding:
       charset: UTF-8
+jwt:
+  secret: qwertyuiopasdfghjklzxcvbnm
+  expiration: 36000000
