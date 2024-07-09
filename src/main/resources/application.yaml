@@ -3,29 +3,25 @@ spring:
     name: micro-shop-app
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/dev
-    username: myapp
-    password: client
+    url: 'jdbc:mariadb://localhost:3306/dev'
+    username: 'myapp'
+    password: 'client'
     hikari:
       allow-pool-suspension: true
       auto-commit: true
-      connection-timeout: 10000
-      idle-timeout: 300000
-      max-lifetime: 1800000
-      maximum-pool-size: 10
-      minimum-idle: 10
+      connection-timeout: 100000
+      idle-timeout: 3000000
+      max-lifetime: 18000000
+      maximum-pool-size: 100
+      minimum-idle: 100
       pool-name: hikariPool
-      catalog: micro_shop_app
       connection-test-query: SELECT 1
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: update
-      format_sql: true
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
-    generate-ddl: true
+    database: mysql
+    database-platform: org.hibernate.dialect.MariaDBDialect
   jackson:
     datatype:
       enum:

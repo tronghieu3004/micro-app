@@ -22,6 +22,7 @@ public class BaseEntity {
     Long id;
 //    String createdBy;
 //    String updatedBy;
+
     @Column(updatable = false)
     @CreatedDate()
     Date createdDate;
@@ -29,7 +30,7 @@ public class BaseEntity {
     @LastModifiedDate()
     Date updatedDate;
 
-    @Column(name = "is_deleted",length = 3)
+    @Column(name = "is_deleted", length = 3)
     @Enumerated(EnumType.STRING)
     UltilsEnum.IsDeleted isDeleted = UltilsEnum.IsDeleted.NO;
 }

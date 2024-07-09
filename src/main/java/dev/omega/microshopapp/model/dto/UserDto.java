@@ -8,12 +8,18 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.Set;
 
 /**
  * DTO for {@link dev.omega.microshopapp.model.entity.User}
  */
 @Value
 public class UserDto implements Serializable {
+    @Setter
+    @Getter
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class UserRegisterDto {
         @Email
         @NotBlank(message = "Email cannot be blank")
@@ -32,6 +38,9 @@ public class UserDto implements Serializable {
         @NotNull
         @Enumerated(EnumType.STRING)
         UserEnum.UserGender gender;
+        @NotNull
+        @Enumerated(EnumType.STRING)
+        Set<UserEnum.UserRole> roles;
     }
 
     public static class UserUpdateDto {
@@ -61,6 +70,7 @@ public class UserDto implements Serializable {
         @Enumerated(EnumType.STRING)
         UserEnum.UserRole role;
     }
+
     @Getter
     public static class UserLoginDto {
         @NotBlank
@@ -68,6 +78,7 @@ public class UserDto implements Serializable {
         @NotBlank
         String password;
     }
+
     @Getter
     public static class UserUpdatePasswordDto {
         @NotNull

@@ -1,5 +1,6 @@
 package dev.omega.microshopapp.controller;
 
+import dev.omega.microshopapp.model.dto.RoleDTO;
 import dev.omega.microshopapp.model.dto.UserDto;
 import dev.omega.microshopapp.model.enums.UserEnum;
 import dev.omega.microshopapp.model.response.ResultResList;
@@ -85,5 +86,10 @@ public class UserController {
     public ResponseEntity<ResultResList<UserDto.UserSearch>> doSearch(@ModelAttribute UserDto.UserSearch userSearch) {
         log.info("In controller, Search user {}", userSearch);
         return userService.doSearch(userSearch);
+    }
+    @PostMapping("admin/role")
+    public ResponseEntity<String> createRole(@RequestBody RoleDTO.AddOrEditRoleDto roleDto) {
+        log.info("In controller, Create role {}", roleDto.getRoleName());
+        return userService.creatRole(roleDto.getRoleName());
     }
 }
