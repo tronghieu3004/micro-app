@@ -26,7 +26,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByPhoneAndPassword(String phone, String password);
     @Query("select u " +
             "from User u " +
-            "where (:role is null or u.role = :role) " +
+            "where 1=1" +
             "and (:status is null or u.status = :status) " +
             "and (:gender is null or u.gender = :gender) " +
             "and (:fullName is null or u.fullName ilike concat('%', :fullName, '%') ) " +
@@ -38,7 +38,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
                                     "or u.phone ilike concat('%', :keyword, '%') " +
                                     "or u.fullName ilike concat('%', :keyword, '%')) ")
     Page<UserDto.UserSearch> doSearch(String keyword,
-                                      UserEnum.UserRole role,
                                       UserEnum.UserStatus status,
                                       UserEnum.UserGender gender,
                                       String fullName,

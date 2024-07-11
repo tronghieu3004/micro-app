@@ -27,4 +27,6 @@ public interface UserService {
     ResponseEntity<String> updateStatus(String username, UserEnum.UserStatus status);
 
     ResponseEntity<String> updateRole(String username, UserEnum.UserRole role);
+
+    ResponseEntity<String> creatRole(UserEnum.UserRole roleName);
 }
