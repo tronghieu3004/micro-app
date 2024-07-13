@@ -18,31 +18,16 @@ spring:
       catalog: micro_shop_app
       connection-test-query: SELECT 1
   jpa:
-    show-sql: true
+#    show-sql: true
     hibernate:
       ddl-auto: update
-      format_sql: true
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
     generate-ddl: true
-  jackson:
-    datatype:
-      enum:
-        write-enums-to-lowercase: true
-      json-node:
-        read-null-properties: true
-        write-null-properties: false
-        write-properties-sorted: true
-    date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
-    time-zone: UTC
-    mapper:
-      use-std-bean-naming: true
-      accept-case-insensitive-enums: true
-    serialization:
-      write-dates-as-timestamps: true
-      close-closeable: true
-      write-enums-using-to-string: true
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
   servlet:
     multipart:
       enabled: true
