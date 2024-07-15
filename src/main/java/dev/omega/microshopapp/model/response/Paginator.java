@@ -3,6 +3,9 @@ package dev.omega.microshopapp.model.response;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 @Getter
@@ -26,6 +29,7 @@ public class Paginator {
             totalPage = 1L;
         }
     }
+
     public Paginator(Long pageNo, int pageSize) {
         this.pageNo = pageNo;
         this.pageSize = pageSize;
@@ -56,5 +60,11 @@ public class Paginator {
 
     public Paginator getInfo() {
         return this;
+    }
+
+    public Pageable getPageable() {
+        return PageRequest.ofSize(pageSize)
+                .withPage((int) (pageNo - 1))
+                .withSort(Sort.by("id").descending());
     }
 }

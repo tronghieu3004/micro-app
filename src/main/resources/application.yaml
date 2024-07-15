@@ -43,3 +43,9 @@ server:
     application-display-name: MicroShopApp
     encoding:
       charset: UTF-8
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui
+    operations-sorter: method

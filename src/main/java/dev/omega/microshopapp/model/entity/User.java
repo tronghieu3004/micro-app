@@ -1,15 +1,17 @@
 package dev.omega.microshopapp.model.entity;
 
-import dev.omega.microshopapp.model.enums.BaseEntity;
 import dev.omega.microshopapp.model.enums.UserEnum;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -46,16 +48,15 @@ public class User extends BaseEntity {
 
     @Column( nullable = false)
     @NotBlank(message = "Status cannot be blank")
-    private UserEnum.UserStatus status;
+    private UserEnum.UserStatus status = UserEnum.UserStatus.ACTIVE;
 
     @Column( nullable = false)
     @NotBlank(message = "Gender cannot be blank")
-    private UserEnum.UserGender gender;
+    private UserEnum.UserGender gender = UserEnum.UserGender.MALE;
 
     @Column( nullable = false)
     @NotBlank(message = "Email cannot be blank")
     @Max(message = "Email cannot be longer than 255 characters", value = 255)
-    @Min(message = "Email cannot be shorter than 8 characters", value = 8)
     @Email
     private String email;
 
@@ -64,11 +65,14 @@ public class User extends BaseEntity {
     @Max(message = "Phone cannot be longer than 15 characters", value = 15)
     @Min(message = "Phone cannot be shorter than 8 characters", value = 8)
     @Pattern(regexp="(^$|[0-9]{10})")
-    private String phone;
+    private String phone = "0123456789";
 
     @Column()
     @NotBlank(message = "Address cannot be blank")
     @Max(message = "Address cannot be longer than 255 characters", value = 255)
     private String address;
+
+    @OneToMany(mappedBy = "staff")
+    private List<OrderEntity> orders;
 
 }
