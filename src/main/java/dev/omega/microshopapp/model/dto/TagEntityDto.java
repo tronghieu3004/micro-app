@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.Set;
 
 /**
  * DTO for {@link dev.omega.microshopapp.model.entity.TagEntity}
@@ -17,7 +18,6 @@ public class TagEntityDto {
     public static class AddOrEditReq {
         Long id;
         String name;
-        String code;
         String description;
     }
 
@@ -29,7 +29,8 @@ public class TagEntityDto {
         String name;
         String code;
         String description;
-        Long noOfProduct;
+        Set<ProductEntityDto.LightRes> products;
+        Integer noOfProduct;
         Date createdAt;
         Date updatedAt;
     }

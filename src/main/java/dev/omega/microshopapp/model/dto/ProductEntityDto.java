@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * DTO for {@link dev.omega.microshopapp.model.entity.ProductEntity}
@@ -17,14 +19,16 @@ public class ProductEntityDto {
     @Data
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class AddOrEditReq implements Serializable {
+    public static class AddOrEditReq {
+        private Long id;
+        private String code;
         private String name;
         private String description;
         private String image;
         private double price;
         private int quantity;
         private ProductTypeEntityDto.LightRes productType;
-        private List<TagEntityDto.LightRes> tags;
+        private Set<TagEntityDto.LightRes> tags = new HashSet<>();
     }
 
     @Data
@@ -37,7 +41,7 @@ public class ProductEntityDto {
         private String image;
         private Double price;
         private Integer quantity;
-        private ProductTypeEntityDto.LightRes productType;
+        private ProductTypeEntityDto.DetailRes productType;
         private List<TagEntityDto.LightRes> tags;
         private Date createdAt;
         private Date updatedAt;
@@ -56,5 +60,13 @@ public class ProductEntityDto {
         private ProductTypeEntityDto.LightRes productType;
         private List<TagEntityDto.LightRes> tags;
         private Date createdAt;
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class LightRes implements Serializable {
+        private Long id;
+        private String code;
     }
 }

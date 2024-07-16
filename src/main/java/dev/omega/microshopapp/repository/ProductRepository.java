@@ -7,12 +7,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
     @Query("select concat('OC -',count(p.id))  " +
             "from ProductEntity p")
     String findNextCode();
+
+    Optional<ProductEntity> findByCode(String code);
 
     Page<ProductEntity> findByNameContaining(String name, Pageable pageable);
 

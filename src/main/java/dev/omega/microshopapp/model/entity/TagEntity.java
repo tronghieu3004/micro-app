@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 public class TagEntity extends BaseEntity {
     private String name;
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "tags", cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "tags")
     @JoinTable(name = "product_tag",
             joinColumns = @JoinColumn(name = "tag_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id"))

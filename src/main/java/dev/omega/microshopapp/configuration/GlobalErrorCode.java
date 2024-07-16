@@ -6,6 +6,8 @@ import org.hibernate.annotations.Fetch;
 
 public class GlobalErrorCode {
     public static class GeneralCode{
+        public static final String SUCCESS = "SUCCESS";
+        public static final String DUPLICATE = "DUPLICATE";
         public static final String GENERAL_ERROR = "GENERAL_ERROR";
         public static final String NOT_FOUND = "NOT_FOUND";
         public static final String BAD_REQUEST = "BAD_REQUEST";
