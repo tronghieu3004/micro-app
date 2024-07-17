@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
-    @Query("select concat('OC -',count(p.id))  " +
+    @Query("select concat('PR -',count(p.id),'-',to_char(now(),'YYYYMMDD-HH24MISS')) " +
             "from ProductEntity p")
     String findNextCode();
 

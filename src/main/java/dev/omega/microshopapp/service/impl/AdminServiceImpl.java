@@ -4,6 +4,7 @@ import dev.omega.microshopapp.configuration.GlobalErrorCode;
 import dev.omega.microshopapp.model.dto.*;
 import dev.omega.microshopapp.model.entity.*;
 import dev.omega.microshopapp.model.response.Pagination;
+import dev.omega.microshopapp.model.response.Paginator;
 import dev.omega.microshopapp.model.response.ResultResList;
 import dev.omega.microshopapp.model.response.ResultResponse;
 import dev.omega.microshopapp.repository.*;
@@ -37,21 +38,21 @@ public class AdminServiceImpl implements AdminService {
     public ResultResList<ProductTypeEntityDto.LightRes> getAllProductType() {
         log.info("In admin service, get all product type light");
         List<ProductTypeEntityDto.LightRes> lightResList = productTypeRepository.findAllLightRes();
-        return new ResultResList<>(BaseUtils.GlobalSuccessCode.CALL_API_SUCCESS, null,lightResList);
+        return new ResultResList<>(BaseUtils.GlobalSuccessCode.CALL_API_SUCCESS, null, lightResList);
     }
 
     @Override
     public ResultResList<ProductTypeEntityDto.SearchRes> searchProductType(ProductTypeEntityDto.SearchReq req) {
         log.info("In admin service, search product type: {}", req);
         Pageable pageable = PageRequest.ofSize(req.getPageSize()).withPage(Math.toIntExact(req.getPageNo())).withSort(Sort.by("id").descending());
-        Page<ProductTypeEntityDto.SearchRes> page = productTypeRepository.doSearch(req.getCode(), req.getGroupTypeCode(),req.getNoOfProduct(),pageable);
+        Page<ProductTypeEntityDto.SearchRes> page = productTypeRepository.doSearch(req.getCode(), req.getGroupTypeCode(), req.getNoOfProduct(), pageable);
         Pagination pag = Pagination.builder()
                 .pageNo(req.getPageNo())
                 .pageSize(req.getPageSize())
                 .totalPages(page.getTotalPages())
                 .totalItems(page.getTotalElements())
                 .build();
-        return new ResultResList<>(BaseUtils.GlobalSuccessCode.CALL_API_SUCCESS, page.getContent(), pag);
+        return new ResultResList<>(BaseUtils.GlobalSuccessCode.CALL_API_SUCCESS,"type.search.success" ,page.getContent(), pag);
     }
 
     @Override
@@ -67,14 +68,14 @@ public class AdminServiceImpl implements AdminService {
             if (existCode && !entity.getCode().equals(req.getCode())) {
                 return new ResultResponse<>(GlobalErrorCode.GeneralCode.DUPLICATE, "type.edit.success", null);
             }
-        }else {
+        } else {
             if (existCode) {
                 return new ResultResponse<>(GlobalErrorCode.GeneralCode.DUPLICATE, "type.add.success", null);
             }
         }
         BeanUtils.copyProperties(entity, req);
         ProductTypeEntity save = productTypeRepository.save(entity);
-        return new ResultResponse<>(BaseUtils.GlobalSuccessCode.CALL_API_SUCCESS, "type.saved.success" , save);
+        return new ResultResponse<>(BaseUtils.GlobalSuccessCode.CALL_API_SUCCESS, "type.saved.success", save);
     }
 
     @Override
@@ -84,39 +85,86 @@ public class AdminServiceImpl implements AdminService {
                 () -> new EntityNotFoundException("Product type")
         );
         productTypeRepository.delete(entity);
-        return new ResultResponse<>(BaseUtils.GlobalSuccessCode.CALL_API_SUCCESS, "type.deleted.success" , entity);
+        return new ResultResponse<>(BaseUtils.GlobalSuccessCode.CALL_API_SUCCESS, "type.deleted.success", entity);
     }
 
     @Override
     public ResultResponse<ProductTypeEntityDto.DetailRes> getProductType(Long id) {
-        return null;
+        log.info("In admin service, get product type detail: {}", id);
+        ProductTypeEntity entity = productTypeRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Product type")
+        );
+        ProductTypeEntityDto.DetailRes res = new ProductTypeEntityDto.DetailRes();
+        BeanUtils.copyProperties( res, entity);
+        return new ResultResponse<>(BaseUtils.GlobalSuccessCode.CALL_API_SUCCESS, "type.detail.success", res);
     }
-/*------------------------------------------------Group Type--------------------------------------------------------------*/
+
+    /*------------------------------------------------Group Type--------------------------------------------------------------*/
     @Override
     public ResultResponse<GroupTypeEntity> addOrEditProductTypeGroup(GroupTypeEntityDto.AddOrEditReq req) {
-        return null;
+        log.info("In admin service, add or edit product type group: {}", req);
+        GroupTypeEntity entity = new GroupTypeEntity();
+        boolean existCode = groupTypeRepository.findByCode(req.getCode()).isPresent();
+        if (req.getId() != null) {
+            entity = groupTypeRepository.findById(req.getId()).orElseThrow(
+                    () -> new EntityNotFoundException("Product type group")
+            );
+            if (existCode && !entity.getCode().equals(req.getCode())) {
+                return new ResultResponse<>(GlobalErrorCode.GeneralCode.DUPLICATE, "type.edit.success", null);
+            }
+        }else {
+            if (existCode) {
+                return new ResultResponse<>(GlobalErrorCode.GeneralCode.DUPLICATE, "type.add.success", null);
+            }
+        }
+        BeanUtils.copyProperties(entity, req);
+        GroupTypeEntity save = groupTypeRepository.save(entity);
+        return new ResultResponse<>(BaseUtils.GlobalSuccessCode.CALL_API_SUCCESS, "type.saved.success", save);
     }
 
     @Override
     public ResultResponse<GroupTypeEntity> deleteProductTypeGroup(Long id) {
-        return null;
+        log.info("In admin service, delete product type group: {}", id);
+        GroupTypeEntity entity = groupTypeRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Product type group")
+        );
+        groupTypeRepository.delete(entity);
+        return new ResultResponse<>(BaseUtils.GlobalSuccessCode.CALL_API_SUCCESS, "type.deleted.success", entity);
     }
 
     @Override
     public ResultResponse<GroupTypeEntityDto.DetailRes> getProductTypeGroup(Long id) {
-        return null;
+        log.info("In admin service, get product type group detail: {}", id);
+        GroupTypeEntity entity = groupTypeRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Product type group")
+        );
+        GroupTypeEntityDto.DetailRes res = new GroupTypeEntityDto.DetailRes();
+        BeanUtils.copyProperties(res, entity);
+        res.setNoOfType((long) entity.getProductTypes().size());
+        res.setProductTypes(entity.getProductTypes().stream().map(
+                productType -> new ProductTypeEntityDto.LightRes(productType.getId(), productType.getName())
+        ).toList());
+        return new ResultResponse<>(BaseUtils.GlobalSuccessCode.CALL_API_SUCCESS, "type.detail.success", res);
     }
 
     @Override
     public ResultResList<GroupTypeEntityDto.LightRes> getAllProductTypeGroup() {
-        return null;
+        log.info("In admin service, get all product type group");
+        List<GroupTypeEntityDto.LightRes> res = groupTypeRepository.findAllLightRes();
+        return new ResultResList<>(BaseUtils.GlobalSuccessCode.CALL_API_SUCCESS, "type.list.success",res);
     }
 
     @Override
     public ResultResList<GroupTypeEntityDto.SearchRes> searchProductTypeGroup(GroupTypeEntityDto.SearchReq req) {
-        return null;
+        log.info("In admin service, search product type group: {}", req);
+        Pageable pageable = PageRequest.of(Math.toIntExact(req.getPageNo()), req.getPageSize()).withSort(Sort.by("id").descending());
+        Page<GroupTypeEntityDto.SearchRes> page = groupTypeRepository.doSearch(req.getKeyword(), pageable);
+        Paginator paginator = new Paginator(req.getPageNo(), req.getPageSize());
+        paginator.setTotalItems(page.getTotalElements());
+        return new ResultResList<>(BaseUtils.GlobalSuccessCode.CALL_API_SUCCESS, "type.list.success", page.getContent(), paginator.toPagination());
     }
-/*------------------------------------------------Product-------------------------------------------------------------*/
+
+    /*------------------------------------------------Product-------------------------------------------------------------*/
     @Override
     public ResultResponse<ProductEntity> addOrEditProduct(ProductEntityDto.AddOrEditReq req) {
         log.info("In admin service, add or edit product: {}", req);
@@ -129,10 +177,13 @@ public class AdminServiceImpl implements AdminService {
             if (existCode && !entity.getCode().equals(req.getCode())) {
                 return new ResultResponse<>(GlobalErrorCode.GeneralCode.DUPLICATE, "product.edit.success", null);
             }
-        }else {
+        } else {
             if (existCode) {
                 return new ResultResponse<>(GlobalErrorCode.GeneralCode.DUPLICATE, "product.add.success", null);
             }
+        }
+        if (req.getCode() != null) {
+            req.setCode(productRepository.findNextCode());
         }
         BeanUtils.copyProperties(entity, req);
         if (req.getProductType() != null) {
@@ -141,7 +192,7 @@ public class AdminServiceImpl implements AdminService {
             );
             entity.setProductType(productType);
         }
-        if (!req.getTags().isEmpty()){
+        if (!req.getTags().isEmpty()) {
             List<TagEntity> tags = tagRepository.findAllById(req.getTags().stream().map(TagEntityDto.LightRes::getId).toList());
             entity.setTags(tags);
         }
@@ -151,7 +202,12 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public ResultResponse<ProductEntity> deleteProduct(Long id) {
-        return null;
+        log.info("In admin service, delete product: {}", id);
+        ProductEntity entity = productRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Product")
+        );
+        productRepository.delete(entity);
+        return new ResultResponse<>(BaseUtils.GlobalSuccessCode.CALL_API_SUCCESS, "product.deleted.success", entity);
     }
 
     @Override
@@ -172,14 +228,27 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public ResultResList<ProductEntity> getAllProduct() {
-        return null;
+        log.info("In admin service, get all product");
+        List<ProductEntity> entities = productRepository.findAll();
+        return new ResultResList<>(BaseUtils.GlobalSuccessCode.CALL_API_SUCCESS, "product.get.success", entities);
     }
 
     @Override
-    public ResultResList<ProductEntityDto.SearchRes> searchProduct(ProductTypeEntityDto.SearchReq req) {
-        return null;
+    public ResultResList<ProductEntityDto.SearchRes> searchProduct(ProductTypeEntityDto.SearchReq req, Paginator paginator) {
+        log.info("In admin service, search product: {}", req);
+        Pageable pageable = PageRequest.of(Math.toIntExact(req.getPageNo()), req.getPageSize()).withSort(Sort.by("id").descending());
+        Page<ProductEntity> page = productRepository.findByNameContaining(req.getKeyword(), pageable);
+        List<ProductEntityDto.SearchRes> res = page.getContent().stream()
+                .map(entity -> {
+                    ProductEntityDto.SearchRes newRes = new ProductEntityDto.SearchRes();
+                    BeanUtils.copyProperties(entity, newRes);
+                    return newRes;
+                })
+                .toList();
+        return new ResultResList<>(BaseUtils.GlobalSuccessCode.CALL_API_SUCCESS,"product.search.success" ,res, paginator.toPagination());
     }
-/*--------------------------------------------------------------Tag--------------------------------------------------------------*/
+
+    /*--------------------------------------------------------------Tag--------------------------------------------------------------*/
     @Override
     public ResultResponse<TagEntity> addOrEditTag(TagEntityDto.AddOrEditReq req) {
         log.info("In admin service, add or edit tag: {}", req);
@@ -192,7 +261,7 @@ public class AdminServiceImpl implements AdminService {
             if (exist && !entity.getName().equals(req.getName())) {
                 return new ResultResponse<>(GlobalErrorCode.GeneralCode.DUPLICATE, "tag.edit.success", null);
             }
-        }else {
+        } else {
             if (exist) {
                 return new ResultResponse<>(GlobalErrorCode.GeneralCode.DUPLICATE, "tag.add.success", null);
             }
@@ -237,24 +306,25 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public ResultResponse<OrderEntity> addOrEditOrder(OrderEntity orderEntity) {
-        log.info("In admin service, add or edit order: {}", orderEntity);
-        boolean exist = orderRepository.findByCode(orderEntity.getCode()).isPresent();
-        if (orderEntity.getId() != null) {
-            orderEntity = orderRepository.findById(orderEntity.getId()).orElseThrow(
+    public ResultResponse<OrderEntity> addOrEditOrder(OrderEntity req) {
+        log.info("In admin service, add or edit order: {}", req);
+        boolean exist = orderRepository.findByCode(req.getCode()).isPresent();
+        OrderEntity orderEntity = new OrderEntity();
+        if (req.getId() != null) {
+            orderEntity = orderRepository.findById(req.getId()).orElseThrow(
                     () -> new EntityNotFoundException("Order")
             );
-            if (exist && !orderRepository.findById(orderEntity.getId()).get().getCode().equals(orderEntity.getCode())) {
+            if (exist && !orderEntity.getCode().equals(req.getCode())) {
                 return new ResultResponse<>(GlobalErrorCode.GeneralCode.DUPLICATE, "order.edit.success", null);
             }
-        }else {
+        } else {
             if (exist) {
                 return new ResultResponse<>(GlobalErrorCode.GeneralCode.DUPLICATE, "order.add.success", null);
             }
             orderEntity.setCode(orderRepository.findNextCode());
         }
+        BeanUtils.copyProperties(orderEntity, req);
         OrderEntity save = orderRepository.save(orderEntity);
-
         return new ResultResponse<>(BaseUtils.GlobalSuccessCode.CALL_API_SUCCESS, "order.saved.success", save);
     }
 
@@ -279,6 +349,18 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public ResultResList<OrderEntityDto.SearchRes> searchOrder(OrderEntityDto.SearchReq req) {
-        return null;
+        log.info("In admin service, search order: {}", req);
+        Pageable pageable = PageRequest.of(Math.toIntExact(req.getPageNo()), req.getPageSize());
+        Page<OrderEntityDto.SearchRes> page =
+                orderRepository.doSearch(req.getKeyword(),
+                                        req.getCode(),
+                                        req.getCreateDateFrom(),
+                                        req.getCreateDateTo(),
+                                        req.getTotalCostFrom(),
+                                        req.getTotalCostTo(),
+                                        pageable);
+        Paginator pag = new Paginator(req.getPageNo(), req.getPageSize());
+        pag.setTotalItems(pag.getTotalItems());
+        return new ResultResList<>(BaseUtils.GlobalSuccessCode.CALL_API_SUCCESS, "order.get.success", page.getContent(), pag.toPagination());
     }
 }

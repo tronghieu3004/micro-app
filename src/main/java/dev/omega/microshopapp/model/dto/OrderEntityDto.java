@@ -1,9 +1,9 @@
 package dev.omega.microshopapp.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -29,22 +29,44 @@ public class OrderEntityDto {
 
     public static class LightRes {
         private Long id;
-        private String name;
-    }
-
-    public static class SearchRes {
-        private Long id;
-        private String name;
+        private String fullName;
         private String code;
-        private Long totalCost;
-        private String description;
-        private Date createdAt;
+        private String totalCost;
     }
 
+    //    public static class SearchRes {
+//        private Long id;
+//        private String name;
+//        private String code;
+//        private Long totalCost;
+//        private String description;
+//        private Date createdAt;
+//    }
+    public interface SearchRes {
+        Long getId();
+
+        String getName();
+
+        String getCode();
+
+        String getPhone();
+
+        String getEmail();
+
+        Long getTotalCost();
+
+        String getDescription();
+
+        Date getCreatedAt();
+    }
+
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class SearchReq extends BaseDTO {
         private String code;
-        private Long totalCostFrom;
-        private Long totalCostTo;
+        private Double totalCostFrom;
+        private Double totalCostTo;
         private Date createDateFrom;
         private Date createDateTo;
 

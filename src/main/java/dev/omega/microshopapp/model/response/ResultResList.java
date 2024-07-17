@@ -3,30 +3,19 @@ package dev.omega.microshopapp.model.response;
 import lombok.*;
 
 import java.util.List;
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
-public class ResultResList<T> extends ResultResponse<List<T>> {
+@NoArgsConstructor
+public class ResultResList<T> {
+    private String code;
+    private String message;
+    private List<T> data;
     private Pagination pagination;
 
-    public ResultResList(String code, String message, List<T> data) {
-        super(code, message, data);
+    public ResultResList(String code, String message, List<T> data){
+        this.code = code;
+        this.message = message;
+        this.data = data;
     }
-    public ResultResList(String code, String message) {
-        this.setCode(code);
-        this.setMessage(message);
-    }
-
-    public ResultResList(String code, List<T> data) {
-        this.setCode(code);
-        this.setData(data);
-    }
-
-    public ResultResList(String code, List<T> data, Pagination pagination) {
-        this.setCode(code);
-        this.setData(data);
-        this.pagination = pagination;
-    }
-
 }
+

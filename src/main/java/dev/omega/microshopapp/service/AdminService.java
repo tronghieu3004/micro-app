@@ -2,6 +2,7 @@ package dev.omega.microshopapp.service;
 
 import dev.omega.microshopapp.model.dto.*;
 import dev.omega.microshopapp.model.entity.*;
+import dev.omega.microshopapp.model.response.Paginator;
 import dev.omega.microshopapp.model.response.ResultResList;
 import dev.omega.microshopapp.model.response.ResultResponse;
 
@@ -39,7 +40,7 @@ public interface AdminService {
 
     ResultResList<ProductEntity> getAllProduct();
 
-    ResultResList<ProductEntityDto.SearchRes> searchProduct(ProductTypeEntityDto.SearchReq req);
+    ResultResList<ProductEntityDto.SearchRes> searchProduct(ProductTypeEntityDto.SearchReq req, Paginator paginator);
 
     /*------------------------------------------------Product Tag-----------------------------------------------------------------------------------*/
     ResultResponse<TagEntity> addOrEditTag(TagEntityDto.AddOrEditReq req);

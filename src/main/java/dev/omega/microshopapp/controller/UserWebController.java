@@ -2,6 +2,7 @@ package dev.omega.microshopapp.controller;
 
 import dev.omega.microshopapp.model.dto.*;
 import dev.omega.microshopapp.model.entity.*;
+import dev.omega.microshopapp.model.response.Paginator;
 import dev.omega.microshopapp.model.response.ResultResList;
 import dev.omega.microshopapp.model.response.ResultResponse;
 import dev.omega.microshopapp.service.AdminService;
@@ -124,7 +125,8 @@ public class UserWebController {
 
     @GetMapping("/product")
     public ResponseEntity<ResultResList<ProductEntityDto.SearchRes>> searchProduct(@ModelAttribute ProductTypeEntityDto.SearchReq req) {
-        return ResponseEntity.ok(adminService.searchProduct(req));
+        Paginator pag = new Paginator(req.getPageNo(),req.getPageSize());
+        return ResponseEntity.ok(adminService.searchProduct(req, pag));
     }
 
     @GetMapping("/product/{id}")

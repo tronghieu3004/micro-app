@@ -5,7 +5,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -33,6 +32,7 @@ public class GroupTypeEntityDto {
         private String code;
         private Long noOfType;
         private String description;
+        private List<ProductTypeEntityDto.LightRes> productTypes;
         private Date createdAt;
         private Date updatedAt;
     }
@@ -45,15 +45,13 @@ public class GroupTypeEntityDto {
         private String name;
     }
 
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class SearchRes {
-        private Long id;
-        private String name;
-        private String code;
-        private String description;
-        private Date createdAt;
+    public interface SearchRes {
+        Long getId();
+        String getName();
+        String getCode();
+        Long getTotalType();
+        String getImage();
+        Date getCreatedAt();
     }
 
     @Data
