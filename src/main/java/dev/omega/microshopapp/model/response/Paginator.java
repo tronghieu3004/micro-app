@@ -1,60 +1,70 @@
 package dev.omega.microshopapp.model.response;
 
 import lombok.Getter;
-import lombok.Setter;
-import lombok.experimental.FieldDefaults;
 
-@FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 @Getter
-@Setter
 public class Paginator {
+    private long pageNo = 1L;
+    private int pageSize = 10;
+    private long totalItems = 0L;
+    private long totalPages = 1L;
 
-    Long pageNo = 1L;
-    Integer pageSize = 10;
-    Long totalPage = 0L;
-    Long totalItems = 1L;
+    private int offset = 1;
+    private int limit = 10;
 
-//    int offset = 1;
-//    int limit = 10;
+    private void calculate() {
 
-    private void calculateTotalPage() {
-        totalPage = (long) Math.ceil((double) totalItems / pageSize);
-        if (totalItems % pageSize != 0) {
-            totalPage++;
-        }
+        this.limit = this.pageSize;
+
         if (totalItems == 0) {
-            totalPage = 1L;
+            this.totalPages = 1;
+            this.offset = 0;
+            return;
         }
+
+        this.totalPages = (long) Math.ceil(this.totalItems / (double) this.pageSize);
+        this.offset = (int) (this.pageNo - 1) * this.pageSize;
     }
-    public Paginator(Long pageNo, int pageSize) {
+
+    public Paginator() {
+    }
+
+    public Paginator(long pageNo, int pageSize) {
         this.pageNo = pageNo;
         this.pageSize = pageSize;
-        this.calculateTotalPage();
+        this.calculate();
     }
 
-    public Paginator(Long pageNo, int pageSize, Long totalItems) {
+    public Paginator(long pageNo, int pageSize, long totalItems) {
         this.pageNo = pageNo;
         this.pageSize = pageSize;
         this.totalItems = totalItems;
-        this.calculateTotalPage();
+        this.calculate();
     }
+
 
     public void setPageNo(long pageNo) {
         this.pageNo = pageNo;
-        this.calculateTotalPage();
+        this.calculate();
     }
 
     public void setPageSize(int pageSize) {
         this.pageSize = pageSize;
-        this.calculateTotalPage();
+        this.calculate();
     }
 
     public void setTotalItems(long totalItems) {
         this.totalItems = totalItems;
-        this.calculateTotalPage();
+        this.calculate();
     }
 
-    public Paginator getInfo() {
-        return this;
+    public Pagination toPagination() {
+        Pagination pagination = new Pagination();
+        pagination.setPageNo(this.pageNo);
+        pagination.setPageSize(this.pageSize);
+        pagination.setTotalItems(this.totalItems);
+        pagination.setTotalPages(this.totalPages);
+        return pagination;
     }
+
 }

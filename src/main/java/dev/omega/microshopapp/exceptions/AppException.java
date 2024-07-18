@@ -10,7 +10,6 @@ import lombok.*;
 public class AppException extends RuntimeException{
     private String code;
     private String message;
-
     public AppException( String code) {
         this.code = code;
     }

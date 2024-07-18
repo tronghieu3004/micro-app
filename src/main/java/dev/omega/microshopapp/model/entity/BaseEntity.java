@@ -1,5 +1,6 @@
-package dev.omega.microshopapp.model.enums;
+package dev.omega.microshopapp.model.entity;
 
+import dev.omega.microshopapp.model.enums.UltilsEnum;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
