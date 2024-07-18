@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -45,4 +46,14 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
                                             Double totalCostTo,
                                             Double totalCostFrom,
                                             Pageable pageable);
+
+    @Query("SELECT new dev.omega.microshopapp.model.dto.OrderEntityDto.LightRes(" +
+            "e.id, " +
+            "e.fullName, " +
+            "e.code, " +
+            "sum(od.total)) " +
+            "FROM OrderEntity e " +
+            "JOIN OrderDetailEntity od ON e.id = od.order.id " +
+            "ORDER BY e.id")
+    List<OrderEntityDto.LightRes> findAllLightRes();
 }

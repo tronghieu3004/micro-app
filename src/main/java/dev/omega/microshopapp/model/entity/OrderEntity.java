@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,9 +20,9 @@ public class OrderEntity extends BaseEntity {
     private String email;
     private String note;
 
-    @OneToOne
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
     @JoinColumn(name = "order_detail_id")
-    private OrderDetailEntity orderDetail;
+    private List<OrderDetailEntity> orderDetails;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

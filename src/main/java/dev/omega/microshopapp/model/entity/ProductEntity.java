@@ -15,7 +15,7 @@ public class ProductEntity extends BaseEntity {
     private String name;
     private String description;
     private String image;
-    private String price;
+    private Double price;
 
     @ManyToMany(fetch = FetchType.LAZY,mappedBy = "products")
     @JoinTable(name = "product_tag",

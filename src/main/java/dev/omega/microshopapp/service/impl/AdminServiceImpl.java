@@ -302,7 +302,12 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public ResultResList<TagEntityDto.SearchRes> searchTag(TagEntityDto.SearchReq req) {
-        return null;
+        log.info("In admin service, search tag: {}", req);
+        Pageable pageable = PageRequest.of(Math.toIntExact(req.getPageNo()), req.getPageSize()).withSort(Sort.by("id").descending());
+        Page<TagEntityDto.SearchRes> page = tagRepository.doSearch(req.getKeyword(), pageable);
+        Paginator paginator = new Paginator(req.getPageNo(), req.getPageSize());
+        paginator.setTotalItems(page.getTotalElements());
+        return new ResultResList<>(BaseUtils.GlobalSuccessCode.CALL_API_SUCCESS, "tag.search.success", page.getContent(), paginator.toPagination());
     }
 
     @Override
@@ -339,12 +344,21 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public ResultResponse<OrderEntityDto.DetailRes> getOrder(Long id) {
-        return null;
+        log.info("In admin service, get order: {}", id);
+        OrderEntity entity = orderRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Order")
+        );
+        OrderEntityDto.DetailRes res = new OrderEntityDto.DetailRes();
+        BeanUtils.copyProperties(entity, res);
+        res.getOrderDetails().addAll(orderDetailRepository.findLigthResByOrderId(entity.getId()));
+        return new ResultResponse<>(BaseUtils.GlobalSuccessCode.CALL_API_SUCCESS, "order.get-detail.success", res);
     }
 
     @Override
     public ResultResList<OrderEntityDto.LightRes> getAllOrder() {
-        return null;
+        log.info("In admin service, get all order");
+        List<OrderEntityDto.LightRes> res = orderRepository.findAllLightRes();
+        return new ResultResList<>(BaseUtils.GlobalSuccessCode.CALL_API_SUCCESS, "order.get-all.success", res);
     }
 
     @Override

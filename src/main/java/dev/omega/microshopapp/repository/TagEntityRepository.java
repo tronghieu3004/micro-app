@@ -2,6 +2,8 @@ package dev.omega.microshopapp.repository;
 
 import dev.omega.microshopapp.model.dto.TagEntityDto;
 import dev.omega.microshopapp.model.entity.TagEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -17,4 +19,13 @@ public interface TagEntityRepository extends JpaRepository<TagEntity, Long> {
             "FROM TagEntity e " +
             "ORDER BY e.id")
     List<TagEntityDto.LightRes> findAllLightRes();
+
+    @Query("SELECT e.id as id, " +
+            "e.name as name, " +
+            "e.products.size as noOfProducts," +
+            "e.createdDate as createdAt  " +
+            "FROM TagEntity e " +
+            "WHERE (:keyword is null or e.name ilike concat('%', :keyword, '%')) ")
+    Page<TagEntityDto.SearchRes> doSearch(String name, Pageable pageable);
+
 }

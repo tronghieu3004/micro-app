@@ -43,16 +43,11 @@ public class TagEntityDto {
         String name;
     }
 
-    @Data
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class SearchRes {
-        Long id;
-        String name;
-        String code;
-        String description;
-        Long noOfProduct;
-        Date createdAt;
+    public interface SearchRes {
+        Long getId();
+        String getName();
+        Long getNoOfProduct();
+        Date getCreatedAt();;
     }
 
     @Data
